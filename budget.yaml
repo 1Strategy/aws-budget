@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates an AWS budget and notifies you when you exceed thresholds.
+Parameters:
+  Name:
+    Description: The name of the budget
+    Type: String
+    Default: Budget
+  Amount:
+    Description: What your budget is for the month
+    Type: Number
+  Currency:
+    Description: The currency of your budget
+    Type: String
+    Default: USD
+  FirstThreshold:
+    Description: The first threshold at which you'll receive a notification
+    Type: Number
+    Default: 75
+  SecondThreshold:
+    Description: The second threshold at which you'll receive a notification
+    Type: Number
+    Default: 99
+  Email:
+    Description: The email address to send notifications to
+    Type: String
+# Order the parameters in a way that makes more sense (not alphabetized)
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Parameters:
+          - Name
+          - Amount
+          - Currency
+          - FirstThreshold
+          - SecondThreshold
+          - Email
+Resources:
+  Budget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Ref Name
+        BudgetLimit:
+          Amount: !Ref Amount
+          Unit: !Ref Currency
+        TimeUnit: MONTHLY
+        BudgetType: COST
+      # "A budget can have up to five notifications. Each notification must have at least one subscriber.
+      # A notification can have one SNS subscriber and up to ten email subscribers, for a total of 11 subscribers."
+      NotificationsWithSubscribers:
+        - Notification:
+            ComparisonOperator: GREATER_THAN
+            NotificationType: ACTUAL
+            Threshold: !Ref FirstThreshold
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref Email
+        - Notification:
+            ComparisonOperator: GREATER_THAN
+            NotificationType: ACTUAL
+            Threshold: !Ref SecondThreshold
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref Email
