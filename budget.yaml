@@ -64,3 +64,11 @@ Resources:
           Subscribers:
             - SubscriptionType: EMAIL
               Address: !Ref Email
+        - Notification:
+            ComparisonOperator: GREATER_THAN
+            NotificationType: FORECASTED
+            Threshold: 100
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref Email
