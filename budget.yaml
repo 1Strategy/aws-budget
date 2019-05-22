@@ -61,6 +61,11 @@ Resources:
             NotificationType: ACTUAL
             Threshold: !Ref SecondThreshold
             ThresholdType: PERCENTAGE
+        - Notification:
+            ComparisonOperator: GREATER_THAN
+            NotificationType: FORECASTED
+            Threshold: 100
+            ThresholdType: PERCENTAGE
           Subscribers:
             - SubscriptionType: EMAIL
               Address: !Ref Email
